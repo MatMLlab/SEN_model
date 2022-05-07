@@ -76,7 +76,7 @@ def main(_):
                 exit(0)
 
 # load input and label datasets
-with open('/home/manager/data1/0-BandGap_Prediction_Case/0-Dataset/mat_struc_cif.json', 'r') as d:
+with open('/home/manager/data1/0-BandGap_Prediction_Case/0-Dataset/mat_struc_cif_0406.json', 'r') as d:
     data = json.load(d)
     material_data = {i['material_id']: i['structure'] for i in data}
 
