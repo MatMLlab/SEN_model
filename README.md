@@ -7,6 +7,7 @@ This a deep learning model for structure symmetry description, material property
 ## Development Environment
 ### Package dependencies
 
+- Linux (ubantu)>=18.04
 - pymatgen==2022.4.19
 - matplotlib>=3.0.3
 - pandas>=1.0.5
@@ -19,7 +20,7 @@ This a deep learning model for structure symmetry description, material property
 - tensorflow_datasets==1.3.0
 
 ### Package Installation
-We can install all neccessary packages according to 'pip' or 'conda'. 
+We can install all neccessary packages according to 'pip' or 'conda' with short time. 
 All data can be downloaded from Material Project (https://materialsproject.org/). 
 All data involved in this work will be available upon request.
 If you need test data, please contact us and provide the transmission address or email that can receive large files, and we will send you complete data. 
@@ -30,6 +31,10 @@ If you need test data, please contact us and provide the transmission address or
 - The capsule transformer is defined in `cap_block.py`.
 - Related models are defined in `models file`.
 - The visualization process in the manuscript is in `plot file`.
+- The running time of one epoch with one batch is less than 1s under NVIDIA GV-100 GPU.
+
+## License
+This project is covered under the Apache 2.0 License.
 
 ## Thanks for your time and attention.
 
