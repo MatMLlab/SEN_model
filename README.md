@@ -2,7 +2,7 @@
 This is a repository for NMI reviewers.
 
 ## Description
-This a deep learning model for structure symmetry description, material property prediction, and material design, which is based on the capsule-enhanced transformer.
+This a deep learning model for structure symmetry description, material property prediction, and material design, which is based on the symmetry-enhanced capsule transformer.
 
 ## Development Environment
 ### Package dependencies
