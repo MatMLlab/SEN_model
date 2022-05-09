@@ -30,7 +30,7 @@ If you need test data, please contact us and provide the transmission address or
 - Related data is in `data file`, and we also prepared the code `data/data.py` to get the dataset from `Material Project`.
 - The capsule transformer is defined in `cap_block.py`.
 - Related models are defined in `models file`.
-- The visualization process in the manuscript is in `plot file`.
+- The visualization process and result plots in the manuscript are in `plot file`.
 - The running time of one epoch with one batch is less than 1s under NVIDIA GV-100 GPU.
 
 ## License
