@@ -26,11 +26,11 @@ All data involved in this work will be available upon request.
 If you need test data, please contact us and provide the transmission address or email that can receive large files, and we will send you complete data. 
 
 ## About the Code
-- The training and testing process are defined in `main.py`.
-- Related data is in `data file`, and we also prepared the code `data/data.py` to get the dataset from `Material Project`.
-- The capsule transformer is defined in `cap_block.py`.
-- Related models are defined in `models file`.
-- The visualization process and result plots in the manuscript are in `plot file`.
+- The training and testing process are defined in `Cap_Models/main.py`.
+- Related data is in `data file`, and we also prepared the code `Cap_Models/data/data.py` to get the dataset from `Material Project`.
+- The capsule transformer is defined in `Cap_Models/cap_block.py`.
+- Related models are defined in `Cap_Models/models file`.
+- The visualization process and result plots in the manuscript are in `Cap_Models/plot file`.
 - The running time of one epoch with one batch is less than 1s under NVIDIA GV-100 GPU.
 
 ## License
