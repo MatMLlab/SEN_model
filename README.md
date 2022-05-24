@@ -1,6 +1,6 @@
 # model_test_for_nmi
 This is a repository for NMI reviewers.
-Detailed description is prepared in 'Cap_Models' file.
+Detailed description is prepared in `Cap_Models` file.
 
 ## License
 This project is covered under the Apache 2.0 License.
