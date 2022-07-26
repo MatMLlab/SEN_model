@@ -7,6 +7,7 @@ This is a deep learning model for structure symmetry description, material prope
 ## Development Environment
 ### Package dependencies
 
+- Please make sure about your running enviornment and package version.
 - Linux (ubantu)>=18.04
 - pymatgen==2022.4.19
 - matplotlib>=3.0.3
@@ -23,10 +24,13 @@ This is a deep learning model for structure symmetry description, material prope
 We can install all neccessary packages according to 'pip' or 'conda' with short time. 
 All data can be downloaded from Material Project (https://materialsproject.org/). 
 All data involved in this work will be available upon request.
-If you need test data, please contact us and provide the transmission address or email that can receive large files, and we will send you complete data. 
+If you need full data, you can download from Material Project website via `data/data.py`.
+Or please contact us and provide the transmission address or email that can receive large files, and we will send you complete data. 
 
 ## About the Code
 - The training and testing process are defined in `main.py`.
+- The feature extraction block is defined in `cap_block.py`.
+- The symmetry perception block is defined in `models/che_env_block.py`.
 - Related data is in `data file`, and we also prepared the code `data/data.py` to get the dataset from `Material Project`.
 - The capsule transformer is defined in `cap_block.py`.
 - Related models are defined in `models file`.
