@@ -7,9 +7,9 @@ This is a deep learning model for structure symmetry description, material prope
 
 
 ## About the matbench test
-- All testing results can be found in `test_raw_file`..
-- The feature extraction block is defined in `cap_block.py`.
-- The symmetry perception block is defined in `models/che_env_block.py`.
+- We have carefully tested the SEN model with the MatBench dataset, and thus enabled the fair comparison among the CGCNN, MEGNet, SchNet, and SEN models. For the models not encompassed in the MatBench website, we acquired the same datasets as the corresponding work, and examined them with the SEN model for fair comparisons.
+- All testing results can be found in `test_raw_data.json` file.
+
 
 
 ## License
