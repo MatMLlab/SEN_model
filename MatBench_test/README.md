@@ -9,6 +9,7 @@ This is a deep learning model for structure symmetry description, material prope
 ## About the matbench test
 - We have carefully tested the SEN model with the MatBench dataset, and thus enabled the fair comparison among the CGCNN, MEGNet, SchNet, and SEN models. For the models not encompassed in the MatBench website, we acquired the same datasets as the corresponding work, and examined them with the SEN model for fair comparisons.
 - All testing results can be found in `test_raw_data.json` file.
+- Testing codes are loading......
 
 
 
