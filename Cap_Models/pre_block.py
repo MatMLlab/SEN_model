@@ -138,118 +138,15 @@ class Forward_predictor(object):
                                          #initial_epoch = init_epoch,
                                          )
 
-                layer_2_out = self.model.get_layer('activation').output
-                inter_2 = tf.keras.Model(inputs=self.model.input, outputs=layer_2_out)
-                layer_2_out = inter_2.predict(self.train_gen)
-                np.savetxt('./Results/0902/re_data_1/hf_1_data/layer_1_out_%s_%d.csv' % (epoch, l), layer_2_out,
-                           delimiter=',')
+                pred_target = self.model.predict_generator(self.val_gen)
 
-                train_targets = self.train_gen.targets
-                pred_target = self.model.predict_generator(self.train_gen)
-
-                a = np.array(pred_target[-1]).reshape(-1)
-                c = np.array(self.train_tar).reshape(-1)
-
-                np.savetxt('./Results/0902/re_data_1/pre_data/pre_deta_%s-%d.csv' % (epoch, l), a, delimiter=',')
-                np.savetxt('./Results/0902/re_data_1/pre_data/real_deta_%s-%d.csv' % (epoch, l), c, delimiter=',')
-                l1_loss = np.mean(np.abs(a - c))
+                sen_pre = np.array(pred_target[-1]).reshape(-1) 
+                real = np.array(self.test_tar).reshape(-1) 
+                l1_loss = np.mean(np.abs(sen_pre - real))
                 print("prediction L1 loss - %d: " % l, l1_loss)
 
-                fig, axs = plt.subplots(nrows=1, ncols=1, sharex=True, sharey=True, figsize=(18, 6))
-                style = dict(size=32, color='gray')
-                axs.plot(range(200), a[200:400], 'b')
-                axs.plot(range(200), c[200:400], 'r')
-                fig.suptitle('Prediction & Ground truth data - %s-%d' % (epoch, l))
-                    # plt.yticks([0, 0.5, 1])
-                    # plt.xticks([0, 0.5, 1])
-                plt.savefig('./Results/0902/re_data_1/figure/plot_gen & real_%d_%s' % (epoch, l))
-                plt.close()
-                    # plt.show()
-
-                fig, axs = plt.subplots(nrows=1, ncols=1, sharex=True, sharey=True, figsize=(6, 6))
-                style = dict(size=32, color='gray')
-                axs.scatter(c, a, c='b', alpha=0.5)
-                fig.suptitle('Prediction & Ground truth data %s-%d' % (epoch, l))
-                plt.yticks([0, 0.5, 1])
-                plt.xticks([0, 0.5, 1])
-                plt.savefig('./Results/0902/re_data_1/figure/scatter_gen & real_%d_%s' % (epoch, l))
-                plt.close()
-                # plt.show()
-
-                # validation and test
-                pred_val_target = self.model.predict_generator(self.val_gen)
-
-                b = np.array(pred_val_target[-1]).reshape(-1)
-                d = np.array(self.test_tar).reshape(-1)
-                np.savetxt('./Results/0902/re_data_1/val_pre_data/val_data_%s-%d.csv' % (epoch, l), b, delimiter=',')
-                np.savetxt('./Results/0902/re_data_1/val_pre_data/real_val_data_%s-%d.csv' % (epoch, l), d,
-                               delimiter=',')
-                l1_loss = np.mean(np.abs(b - d))
-                print("prediction L1 loss of Val - %d: " % l, l1_loss)
-
-                fig, axs = plt.subplots(nrows=1, ncols=1, sharex=True, sharey=True, figsize=(6, 6))
-                style = dict(size=32, color='gray')
-                axs.scatter(d, b, c='b', alpha=0.5)
-                fig.suptitle('Val Prediction & Ground truth data %s-%d' % (epoch, l))
-                plt.yticks([0, 0.5, 1])
-                plt.xticks([0, 0.5, 1])
-                plt.savefig('./Results/0902/re_data_1/val_figure/val_scatter_gen & real_%d_%s' % (epoch, l))
-                plt.close()
-
-
-            if epoch % 5  == 0 and epoch != 0:
-                atom_inp = self.model.get_layer('atom_embedding').output[0]
-                preblock_atom_0 = self.model.get_layer('preblock_atom_0').output[0]
-                preblock_atom_1 = self.model.get_layer('preblock_atom_1').output[0]
-                block_add_atom_0 = self.model.get_layer('block_add_atom_0').output[0]
-                block_add_atom_1 = self.model.get_layer('block_add_atom_1').output[0]
-                block_add_atom_2 = self.model.get_layer('block_add_atom_2').output[0]
-                set2set_atom = self.model.get_layer('set2set_atom').output[0]
-                multiply = self.model.get_layer('multiply').output[0]
-                set2set_bond = self.model.get_layer('set2set_bond').output[0]
-                lstm = self.model.get_layer('lstm').output[0]
-                dense_out = self.model.get_layer('tf_op_layer_material_autoencoder/dense_out').output
-
-
-
-                atom_inp_0 = tf.keras.Model(inputs=self.model.input, outputs=atom_inp)
-                inter_layer_0 = tf.keras.Model(inputs=self.model.input, outputs=preblock_atom_0)
-                inter_layer_1 = tf.keras.Model(inputs = self.model.input, outputs = preblock_atom_1)
-                inter_layer_2 = tf.keras.Model(inputs=self.model.input, outputs=block_add_atom_0)
-                inter_layer_3 = tf.keras.Model(inputs=self.model.input, outputs=block_add_atom_1)
-                inter_layer_4 = tf.keras.Model(inputs=self.model.input, outputs=block_add_atom_2)
-                set_atom_layer = tf.keras.Model(inputs=self.model.input, outputs=set2set_atom)
-                multiply_layer = tf.keras.Model(inputs=self.model.input, outputs=multiply)
-                set_bond_layer = tf.keras.Model(inputs=self.model.input, outputs=set2set_bond)
-                lstm_layer = tf.keras.Model(inputs=self.model.input, outputs=lstm)
-                dense_layer = tf.keras.Model(inputs=self.model.input, outputs=dense_out)
-
-                atom_inp_out = atom_inp_0.predict(self.train_gen)
-                atom_0_out = inter_layer_0.predict(self.train_gen)
-                atom_1_out = inter_layer_1.predict(self.train_gen)
-                atom_2_out = inter_layer_2.predict(self.train_gen)
-                atom_3_out = inter_layer_3.predict(self.train_gen)
-                atom_4_out = inter_layer_4.predict(self.train_gen)
-                set_atom_out = set_atom_layer.predict(self.train_gen)
-                multiply_out = multiply_layer.predict(self.train_gen)
-                set_bond_out = set_bond_layer.predict(self.train_gen)
-                lstm_out = lstm_layer.predict(self.train_gen)
-                dense_out = dense_layer.predict(self.train_gen)
-
-                np.savetxt('./Results/0902/mid_out/atom_inp_%s_%d.csv' % (epoch, l), atom_inp_out, delimiter=',')
-                np.savetxt('./Results/0902/mid_out/atom_0_out_%s_%d.csv' % (epoch, l), atom_0_out, delimiter=',')
-                np.savetxt('./Results/0902/mid_out/atom_1_out_%s_%d.csv' % (epoch, l), atom_1_out, delimiter=',')
-                np.savetxt('./Results/0902/mid_out/atom_2_out_%s_%d.csv' % (epoch, l), atom_2_out, delimiter=',')
-                np.savetxt('./Results/0902/mid_out/atom_3_out_%s_%d.csv' % (epoch, l), atom_3_out, delimiter=',')
-                np.savetxt('./Results/0902/mid_out/atom_4_out_%s_%d.csv' % (epoch, l), atom_4_out, delimiter=',')
-                np.savetxt('./Results/0902/mid_out/set_atom_%s_%d.csv' % (epoch, l), set_atom_out, delimiter=',')
-                np.savetxt('./Results/0902/mid_out/multiply_%s_%d.csv' % (epoch, l), multiply_out, delimiter=',')
-                np.savetxt('./Results/0902/mid_out/set_bond_%s_%d.csv' % (epoch, l), set_bond_out, delimiter=',')
-                np.savetxt('./Results/0902/mid_out/lstm_%s_%d.csv' % (epoch, l), lstm_out, delimiter=',')
-
-                for i in range(dense_out.shape[0]):
-                    a = dense_out[i]
-                    np.savetxt('./Results/0902/mid_out/dense/dense_%s_%d_%s.csv' % (epoch, l, i), a, delimiter=',')
+                np.savetxt('./Results/pre_data_%s-%d.csv' % (epoch, l), sen_pre, delimiter=',')
+                np.savetxt('./Results/real_data_%s-%d.csv' % (epoch, l), real, delimiter=',')
 
 
     def predict_model(self, epoch, l):
