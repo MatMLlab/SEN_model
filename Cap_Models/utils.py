@@ -5,73 +5,81 @@ from typing import Dict, List, Union
 import numpy as np
 from models.layers.atom_env import GraphBatchDistanceConvert, GraphBatchGenerator, StructureGraphFixedRadius
 from models.layers.preprocessing import DummyScaler, Scaler
+from submodels import get_graphs_within_cutoff
+
+def data_pro(structure_data, crystal_graph):
+
+    for idx_task, task in enumerate(structure_data.tasks):
+        task.load()
+        for i, fold in enumerate(task.folds):
+            train_struc_data, train_bandgap_data = task.get_train_and_val_data(fold)
+            test_struc_data, test_bandgap_data = task.get_test_data(fold, include_target=True)
 
 
-def data_pro(bandgap_data, mode, structure_data, crystal_graph):
-
-    mat_ids = set.union(*[set(bandgap_data[i].keys()) for i in ['hse']])
-    struc_data = {i: structure_data[i] for i in mat_ids}
-    struc_data = {i: crystal_graph.convert(Structure.from_str(j, fmt='cif'))
-                      for i, j in struc_data.items()}
-
-    graphs = []
-    targets = []
     material_ids = []
-    mode = ['hse']
-    for mat_id, cal_mode in enumerate(mode):
-        for mp_id in bandgap_data[cal_mode]:
-            if bandgap_data[cal_mode][mp_id] < 15 :
-                targets.append(bandgap_data[cal_mode][mp_id])
+    train_tar = []
+    for i, j in train_bandgap_data.items():
+        train_tar.append(j)
+    train_tar = np.array(train_tar)
 
-                graph = deepcopy(struc_data[mp_id])
-                graph['state'] = [mat_id]
-                graphs.append(graph)
-            else:
-                pass
-            material_ids.append('%s_%s' % (mp_id, cal_mode))
+    train_targets = []
+    train_graphs = []
+    n = 0
+    for i, j in train_struc_data.items():
+        index1, index2, _, bonds = get_graphs_within_cutoff(j, cutoff = 5)
+        if np.size(np.unique(index1)) != 0:
+            graph = crystal_graph.convert(j)
+            train_graphs.append(graph)
+            train_targets.append(train_tar[n])
+            material_ids.append(n)
+            n = n + 1
+        else:
+            composition = j.formula
+            n = n + 1
+            print(composition)
 
-    max_bp = np.max(np.array(targets))
-    targets = targets / max_bp
+    train_num = len(train_graphs)
+    test_tar = []
+    for i, j in test_bandgap_data.items():
+        test_tar.append(j)
+    test_tar = np.array(test_tar)
 
-    #material_ids = material_ids[:200]
 
-    final_graphs = {i: j for i, j in zip(material_ids, graphs)}
-    final_targets = {i: j for i, j in zip(material_ids, targets)}
+    n = 0
+    for i, j in test_struc_data.items():
+        index1, index2, _, bonds = get_graphs_within_cutoff(j, cutoff = 5)
+        if np.size(np.unique(index1)) != 0:
+            graph = crystal_graph.convert(j)
+            train_graphs.append(graph)
+            train_targets.append(test_tar[n])
+            material_ids.append(n + train_num)
+            n = n + 1
+        else:
+            composition = j.formula
+            n = n + 1
+            print(composition)
 
-    #  Data splits
-    ##  Random seed
-    SEED = 42
+    max_bp = np.max(np.array(train_targets))
+    #min_bp = np.min(np.array(train_targets))
+    train_targets = np.array(train_targets)/max_bp
+    #test_targets = np.array(test_targets)
 
-    ##  train:val:test = 8:1:1
-    fidelity_list = [i.split('_')[1] for i in material_ids]
+    final_graphs = {i: j for i, j in zip(material_ids, train_graphs)}
+    final_targets = {i: j for i, j in zip(material_ids, train_targets)}
 
-    train_ids = material_ids[:5000]
-    test_ids = material_ids[5000:]
-    #train_val_ids, test_ids = train_test_split(material_ids, test_size=0.1,
-    #                                           shuffle = False, random_state=None)
-    #fidelity_list = [i.split('_')[1] for i in train_val_ids]
-    #train_ids, val_ids = train_test_split(train_val_ids, test_size=0.1 / 0.9,
-    #                                      shuffle = False, random_state=None)
+    from sklearn.model_selection import train_test_split
 
-    ##  remove pbe from validation
-    #val_ids = [i for i in val_ids if not i.endswith('pbe')]
+    train_ids, test_ids = train_test_split(material_ids, test_size=0.2, shuffle = True, random_state = 66)
+    train_ids = np.array(train_ids)
+    test_ids = np.array(test_ids)
 
     ## Get the train, val and test graph-target pairs
     def get_graphs_targets(ids):
-        """
-        Get graphs and targets list from the ids
 
-        Args:
-            ids (List): list of ids
-
-        Returns:
-            list of graphs and list of target values
-        """
         ids = [i for i in ids if i in final_graphs]
         return [final_graphs[i] for i in ids], [final_targets[i] for i in ids]
 
     train_graphs, train_targets = get_graphs_targets(train_ids)
-
     test_graphs, test_targets = get_graphs_targets(test_ids)
 
     return train_graphs, train_targets, test_graphs, test_targets
