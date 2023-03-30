@@ -7,9 +7,8 @@ The SNE-model consist of two part:
 from __future__ import print_function
 from __future__ import division
 import os
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
 import gzip
 import json
 import numpy as np
@@ -21,6 +20,12 @@ from models import cap_seq
 from models.layers.atom_env import GaussianDistance
 from Configs import *
 import tensorflow as tf
+
+# load Matbench dataset
+from matbench.bench import MatbenchBenchmark
+
+subsets_compatible = ["matbench_mp_gap"]
+mb = MatbenchBenchmark(subset=subsets_compatible, autoload=False)
 
 # GPU SETTING
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
@@ -48,8 +53,7 @@ def main(_):
     if FLAGS.use_gpu:
         with tf.compat.v1.Session() as sess:
             pre_model = Forward_predictor(sess, Cap_model=cap_model, MatCheCon_model=MatCheCon,
-                                          cry_graph=crystal_pro, mode=FLAGS.mode,
-                                          str_data=material_data, bg_data=band_gap,
+                                          cry_graph=crystal_pro, mode=FLAGS.mode, str_data=mb,
                                           batch_size=FLAGS.batch_size, learning_rate=FLAGS.lr,
                                           n_epoch=FLAGS.training_epoch)
             if FLAGS.phase == 'train':
@@ -63,8 +67,7 @@ def main(_):
         print("CPU\n")
         with tf.compat.v1.Session() as sess:
             pre_model = Forward_predictor(sess, Cap_model=cap_model, MatCheCon_model=MatCheCon,
-                                          cry_graph=crystal_pro, mode=FLAGS.mode,
-                                          str_data=material_data, bg_data=band_gap,
+                                          cry_graph=crystal_pro, mode=FLAGS.mode, str_data=mb
                                           batch_size=FLAGS.batch_size, learning_rate=FLAGS.lr,
                                           n_epoch=FLAGS.training_epoch)
             if FLAGS.phase == 'train':
@@ -74,14 +77,6 @@ def main(_):
             else:
                 print('[!]Unknown phase')
                 exit(0)
-
-# load input and label datasets
-with open('/home/manager/data1/0-BandGap_Prediction_Case/0-Dataset/mat_struc_cif_0406.json', 'r') as d:
-    data = json.load(d)
-    material_data = {i['material_id']: i['structure'] for i in data}
-
-with gzip.open('/home/manager/data1/0-BandGap_Prediction_Case/0-Dataset/ground_truth_bandgap.json.gz', 'rb') as d:
-    band_gap = json.loads(d.read())
 
 crystal_pro = CrystalPro(bond_converter = GaussianDistance(centers=np.linspace(0, 6, 100),
                                                            width=0.5), cutoff=5.0)
