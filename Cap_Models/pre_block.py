@@ -132,7 +132,7 @@ class Forward_predictor(object):
                                          validation_data = self.val_gen,
                                          validation_steps = self.steps_per_val,
                                          use_multiprocessing = False,
-                                         epochs = 2000,
+                                         epochs = 20,
                                          #callbacks = callbacks,
                                          shuffle=False,
                                          #initial_epoch = init_epoch,
@@ -165,8 +165,6 @@ class Forward_predictor(object):
         style = dict(size=32, color='gray')
         axs.scatter(d, b, c='b', alpha=0.5)
         fig.suptitle('Val Prediction & Ground truth data %s-%d' % (epoch, l))
-        plt.yticks([0, 0.5, 1])
-        plt.xticks([0, 0.5, 1])
         plt.savefig('./Results/0902/re_data_1/val_figure/val_scatter_gen & real_%d_%s' % (epoch, l))
         plt.close()
 
