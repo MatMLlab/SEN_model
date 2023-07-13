@@ -1,5 +1,6 @@
+10.5281/zenodo.8142678
 # SEN Model
-This is a repository for NMI reviewers.
+This is a repository for SEN model.
 Detailed description is prepared in `Cap_Models` file.
 
 ## Description
