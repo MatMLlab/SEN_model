@@ -1,4 +1,4 @@
-# model_test_for_nmi
+# SEN Model
 This is a repository for NMI reviewers.
 Detailed description is prepared in `Cap_Models` file.
 
